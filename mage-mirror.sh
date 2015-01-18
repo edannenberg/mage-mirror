@@ -121,7 +121,7 @@ check_patch_dependencies() {
     fi
 }
 
-REQUIRED_BINARIES="sort tar tail tr wget"
+REQUIRED_BINARIES="patch sort tar tail tr wget"
 for BINARY in ${REQUIRED_BINARIES}; do
     if ! [ -x "$(command -v ${BINARY})" ]; then
         die "${BINARY} is required for this script to run."
@@ -141,9 +141,9 @@ mkdir -p "${DL_PATH}" "${MIRROR_PATH}" "${TMP_PATH}"
 for MAGE_VERSION in ${MIRROR_VERSIONS}; do
     MAGE_FILE_NAME=magento-${MAGE_VERSION}.tar.gz
     if [ ! -f ${DL_PATH}/${MAGE_FILE_NAME} ]; then
-    msg "downloading: ${MAGE_FILE_NAME} (progress bar won't display in logs)"
-    wget -O ${DL_PATH}/${MAGE_FILE_NAME} ${MAGE_URL}/${MAGE_VERSION}/${MAGE_FILE_NAME} || \
-        die "error downloading ${MAGE_URL}/${MAGE_VERSION}/${MAGE_FILE_NAME}"
+        msg "downloading: ${MAGE_FILE_NAME} (progress bar won't display in logs)"
+        wget -O ${DL_PATH}/${MAGE_FILE_NAME} ${MAGE_URL}/${MAGE_VERSION}/${MAGE_FILE_NAME} || \
+            die "error downloading ${MAGE_URL}/${MAGE_VERSION}/${MAGE_FILE_NAME}"
     else
         msg "found: ${MAGE_FILE_NAME}"
     fi
@@ -168,9 +168,7 @@ for MAGE_VERSION in ${MIRROR_VERSIONS}; do
         fi
         SAMPLE_DATA_FILENAME="magento-sample-data-${SAMPLE_DATA_VERSION}.tar.gz"
 
-        if ([[ "${SAMPLE_DATA_VERSION}" == "1.9.0.0" ]] || version_gt ${SAMPLE_DATA_VERSION} "1.9.0.0") && \
-            [[ "${VINAI_AWESOMENESS}" == 'true' ]]; then
-
+        if version_gt ${SAMPLE_DATA_VERSION} "1.9.0.0" && [[ "${VINAI_AWESOMENESS}" == 'true' ]]; then
             SAMPLE_DATA_FILENAME_SRC="compressed-no-mp3-magento-sample-data-${SAMPLE_DATA_VERSION}.tgz"
             SAMPLE_DATA_URL="${VINAI_REPO_URL}/${SAMPLE_DATA_VERSION}/${SAMPLE_DATA_FILENAME_SRC}"
         else
@@ -210,7 +208,12 @@ for MAGE_VERSION in ${MIRROR_VERSIONS}; do
             echo ${PATCH}
             PATCH_FILE=$(basename $PATCH)
             cp "${PATCHES_PATH}/${PATCH}" "$TMP_PATH/magento"
-            bash ${PATCH_FILE} || die "error applying patch: ${PATCH}"
+            if [[ "${PATCH_FILE}" == *.sh ]]; then
+                PATCHER=("bash" "${PATCH_FILE}")
+            else
+                PATCHER=("patch" "-p1" "-i" "${PATCH_FILE}")
+            fi
+            "${PATCHER[@]}" || die "error applying patch: ${PATCH}"
             rm "${TMP_PATH}/magento/${PATCH_FILE}"
         done
         cd "${PROJECT_DIR}"
