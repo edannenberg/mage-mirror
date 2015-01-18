@@ -1,14 +1,14 @@
 mage-mirror
 ==========
 
-Small Bash script to create a local Magento CE mirror.
+Small Bash script to create and maintain a fully patched private Magento CE mirror.
 
 Features
 --------
 
-* Applies official Magento CE patches to downloaded archives (configurable)
+* Applies official Magento CE and custom diff style patches to downloaded archives (configurable)
 * Replaces 1.9.x sample data with [mp3 free](https://github.com/Vinai/compressed-magento-sample-data) versions (configurable), courtesy of Vinai <3
-* Created file structure matches official Magento mirror for easy drop in replacement in existing code (configurable)
+* Creates file structure matching official Magento mirror, for easy drop in replacement with existing code, or a flat mirror
 
 Quick Start
 -----------
@@ -17,20 +17,34 @@ Quick Start
     $ cd mage-mirror/
     $ ./mage-mirror.sh
 
-The script supports POSIX parameter expansion for most options:
+POSIX parameter expansion is supported for most options:
 
     $ APPLY_PATCHES=false MIRROR_VERSIONS="1.9.0.0 1.9.0.1" ./mage-mirror.sh
 
-Once the script finishes you can simply upload the contents of the `mirror/` folder to a web server of your choice.
+Downloaded archives are kept unmodified at `$DL_PATH` to avoid downloading again on script rerun.
+The mirror is created at `$MIRROR_PATH`, default: `mirror/`.
 
 Managing Patches
 ----------------
 
-* Drop new patches into the `patches/` folder, file structure should be fairly obvious
-* Currently only patch scripts provided by Magento are supported, shouldn't be too hard to add plain `.diff` support though
+* Patch files are kept at `$PATCHES_PATH`, default: `patches/`
+* Sub folder names are used to define the Magento version range each patch should be applied to
+* Patch dependencies are defined via `$PATCH_DEPENDENCIES` in `mage-mirror.sh` (rarely needed)
 
-`PATCH_SUPEE-4334_EE_1.11.0.0-1.13.0.2_v1.sh` and `PATCH_SUPEE-1868_EE_1.13.x_v1.sh` are currently excluded,
-seems to be broken for Magento 1.8.x. Both patches are supposed to address USPS api changes.
+Patch Status
+------------
+
+The repo comes with all [official](http://www.magentocommerce.com/download) Magento CE Patches, except:
+
+`PATCH_SUPEE-4334_EE_1.11.0.0-1.13.0.2_v1.sh`
+`PATCH_SUPEE-1868_EE_1.13.x_v1.sh`
+
+`PATCH_SUPEE-1868` seems to be broken for Magento 1.8.x and `PATCH_SUPEE-4334` depends on the former.
+Both patches are supposed to address USPS api changes.
+
+Unofficial Patches:
+
+[magento_url_rewrite.patch](https://gist.github.com/edannenberg/5310008)
 
 Developer
 ---------
