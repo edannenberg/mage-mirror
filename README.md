@@ -1,7 +1,7 @@
 mage-mirror
 ==========
 
-Small Bash script to create and maintain a fully patched private Magento CE mirror.
+Small Bash script to create and maintain a fully patched Magento CE mirror.
 
 Features
 --------
