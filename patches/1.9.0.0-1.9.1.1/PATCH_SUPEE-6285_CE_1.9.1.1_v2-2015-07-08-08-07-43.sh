@@ -157,7 +157,7 @@ echo -e "$APPLIED_REVERTED_PATCH_INFO\n$PATCH_APPLY_REVERT_RESULT\n\n" >> "$APPL
 exit 0
 
 
-SUPEE-6285 | CE_1.9.1.1 | v1 | 7226d88b1eeb07a5fbc4e62be189a5219457cc14 | Mon Jun 22 16:32:26 2015 +0300 | 202596e441..7226d88b1e
+SUPEE-6285 | CE_1.9.1.1 | v2 | 7226d88b1eeb07a5fbc4e62be189a5219457cc14 | Mon Jun 22 16:32:26 2015 +0300 | 202596e441..7226d88b1e
 
 __PATCHFILE_FOLLOWS__
 diff --git app/Mage.php app/Mage.php
@@ -1062,6 +1062,19 @@ index 43698c2..f4fe5ab 100644
                              <?php endif; ?>
                              <button type="submit" name="update_cart_action" value="update_qty" title="<?php echo $this->__('Update Shopping Cart'); ?>" class="button btn-update"><span><span><?php echo $this->__('Update Shopping Cart'); ?></span></span></button>
                              <button type="submit" name="update_cart_action" value="empty_cart" title="<?php echo $this->__('Clear Shopping Cart'); ?>" class="button btn-empty" id="empty_cart_button"><span><span><?php echo $this->__('Clear Shopping Cart'); ?></span></span></button>
+diff --git app/design/frontend/rwd/default/template/checkout/cart.phtml app/design/frontend/rwd/default/template/checkout/cart.phtml
+index 7bceece..88753c3 100644
+--- app/design/frontend/rwd/default/template/checkout/cart.phtml
++++ app/design/frontend/rwd/default/template/checkout/cart.phtml
+@@ -115,7 +115,7 @@
+                         <span class="or">-<?php echo $this->__('or'); ?>-</span>
+ 
+                         <?php if($this->getContinueShoppingUrl()): ?>
+-                            <button type="button" title="<?php echo $this->__('Continue Shopping') ?>" class="button2 btn-continue" onclick="setLocation('<?php echo $this->getContinueShoppingUrl() ?>')"><span><span><?php echo $this->__('Continue Shopping') ?></span></span></button>
++                            <button type="button" title="<?php echo $this->quoteEscape($this->__('Continue Shopping')) ?>" class="button2 btn-continue" onclick="setLocation('<?php echo Mage::helper('core')->quoteEscape($this->getContinueShoppingUrl()) ?>')"><span><span><?php echo $this->__('Continue Shopping') ?></span></span></button>
+                         <?php endif; ?>
+                         <!--[if lt IE 8]>
+                         <input type="hidden" id="update_cart_action_container" />
 diff --git downloader/Maged/.htaccess downloader/Maged/.htaccess
 new file mode 100644
 index 0000000..93169e4
