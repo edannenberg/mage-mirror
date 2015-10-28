@@ -39,8 +39,10 @@ The repo comes with all [official](http://www.magentocommerce.com/download) Mage
 `PATCH_SUPEE-4334_EE_1.11.0.0-1.13.0.2_v1.sh`
 `PATCH_SUPEE-1868_EE_1.13.x_v1.sh`
 
-`PATCH_SUPEE-1868` seems to be broken for Magento 1.8.x and `PATCH_SUPEE-4334` depends on the former.
-Both patches are supposed to address USPS api changes.
+Which are excluded only for Magento 1.8.x.
+
+`PATCH_SUPEE-1868` is broken for Magento 1.8.x and `PATCH_SUPEE-4334` depends on the former.
+Both patches are supposed to address USPS api changes. 1.7.x is unaffected and fully patched.
 
 Unofficial Patches:
 
