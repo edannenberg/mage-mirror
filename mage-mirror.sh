@@ -207,7 +207,7 @@ for MAGE_VERSION in ${MIRROR_VERSIONS}; do
         tar -xpf "${DL_PATH}/${MAGE_FILE_NAME}" -C ${TMP_PATH}
         cd "${TMP_PATH}/magento"
         msg "apply patches:"
-        PATCHES=$(find_patches ${MAGE_VERSION})
+        PATCHES=$(find_patches ${MAGE_VERSION} | tr ' ' '\n' | sort -t/ -k2)
         for PATCH in $PATCHES; do
             echo ${PATCH}
             PATCH_FILE=$(basename $PATCH)
