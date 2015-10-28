@@ -24,6 +24,8 @@ POSIX parameter expansion is supported for most options:
 Downloaded archives are kept unmodified at `$DL_PATH` to avoid downloading again on script rerun.
 The mirror is created at `$MIRROR_PATH`, default: `mirror/`.
 
+NOTE: Automated downloads are broken since Magento 1.9.2.0, you will need to download them manually to `$DL_PATH`. Also remove any timestamp from the filename.
+
 Managing Patches
 ----------------
 
