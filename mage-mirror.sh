@@ -144,12 +144,22 @@ mkdir -p "${DL_PATH}" "${MIRROR_PATH}" "${TMP_PATH}"
 
 for MAGE_VERSION in ${MIRROR_VERSIONS}; do
     MAGE_FILE_NAME=magento-${MAGE_VERSION}.tar.gz
-    if [ ! -f ${DL_PATH}/${MAGE_FILE_NAME} ]; then
-        msg "downloading: ${MAGE_FILE_NAME} (progress bar won't display in logs)"
-        wget -O ${DL_PATH}/${MAGE_FILE_NAME} ${MAGE_URL}/${MAGE_VERSION}/${MAGE_FILE_NAME} || \
-            die "error downloading ${MAGE_URL}/${MAGE_VERSION}/${MAGE_FILE_NAME}"
+    if version_gt ${MAGE_VERSION} "1.9.2.3"; then
+        # timestamp in filename since 1.9.2.0, fixed since 1.9.2.3
+        MAGE_FILE_NAME_ORG=magento-${MAGE_VERSION}-*.tar.gz
+    elif version_gt ${MAGE_VERSION} "1.9.2.0"; then
+        # 1.9.2.0-1.9.2.2 has fcked up timestamp for gz/bz2 releases
+        MAGE_FILE_NAME_ORG=magento-${MAGE_VERSION}.tar-*.gz
     else
-        msg "found: ${MAGE_FILE_NAME}"
+        MAGE_FILE_NAME_ORG=magento-${MAGE_VERSION}.tar.gz
+    fi
+
+    if [ ! -f ${DL_PATH}/${MAGE_FILE_NAME_ORG} ]; then
+        msg "downloading: ${MAGE_FILE_NAME_ORG} (progress bar won't display in logs)"
+        wget -O ${DL_PATH}/${MAGE_FILE_NAME_ORG} ${MAGE_URL}/${MAGE_VERSION}/${MAGE_FILE_NAME_ORG} || \
+            die "error downloading ${MAGE_URL}/${MAGE_VERSION}/${MAGE_FILE_NAME_ORG}"
+    else
+        msg "found: ${MAGE_FILE_NAME_ORG}"
     fi
 
     # sample data
@@ -202,9 +212,16 @@ for MAGE_VERSION in ${MIRROR_VERSIONS}; do
 
     # apply patches
     if [[ "${APPLY_PATCHES}" == 'true' ]]; then
-        msg "extract: ${MAGE_FILE_NAME}"
         rm -rf "${TMP_PATH}/magento"
-        tar -xpf "${DL_PATH}/${MAGE_FILE_NAME}" -C ${TMP_PATH}
+        # handle bugged 1.9.2.2 release archive, the usual 'magento/' root folder is missing
+        if [[ "${MAGE_VERSION}" == "1.9.2.2" ]]; then
+            mkdir "${TMP_PATH}/magento"
+            EXTRACT_PATH="${TMP_PATH}/magento"
+        else
+            EXTRACT_PATH="${TMP_PATH}"
+        fi
+        msg "extract: ${MAGE_FILE_NAME_ORG}"
+        tar -xpf ${DL_PATH}/${MAGE_FILE_NAME_ORG} -C "${EXTRACT_PATH}"
         cd "${TMP_PATH}/magento"
         msg "apply patches:"
         PATCHES=$(find_patches ${MAGE_VERSION} | tr ' ' '\n' | sort -t/ -k2)
