@@ -26,6 +26,7 @@ MIRROR_VERSIONS="${MIRROR_VERSIONS:-
 1.9.2.0
 1.9.2.1
 1.9.2.2
+1.9.2.3
 }"
 # create a flat mirror instead of duplicating the official Magento mirror structure?
 FLAT_MIRROR="${FLAT_MIRROR:-false}"
