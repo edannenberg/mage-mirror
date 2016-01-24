@@ -125,7 +125,7 @@ check_patch_dependencies() {
     fi
 }
 
-REQUIRED_BINARIES="patch sort tar tail tr wget"
+REQUIRED_BINARIES="awk patch sort tar tail tr wget"
 for BINARY in ${REQUIRED_BINARIES}; do
     if ! [ -x "$(command -v ${BINARY})" ]; then
         die "${BINARY} is required for this script to run."
@@ -138,9 +138,14 @@ TMP_PATH="${TMP_PATH:-$PROJECT_DIR/tmp}"
 PATCHES_PATH="${PATCHES_PATH:-$PROJECT_DIR/patches}"
 MIRROR_PATH="${MIRROR_PATH:-$PROJECT_DIR/mirror}"
 VINAI_REPO_URL="https://raw.githubusercontent.com/Vinai/compressed-magento-sample-data"
+PATCH_LOG_FILE="${PROJECT_DIR}/SUPEE-LOG.md"
 
 rm -rf "${MIRROR_PATH}"
 mkdir -p "${DL_PATH}" "${MIRROR_PATH}" "${TMP_PATH}"
+
+if [[ "${APPLY_PATCHES}" == 'true' ]]; then
+    echo "## SUPEE patch log - run date: $(date) " > "${PATCH_LOG_FILE}"
+fi
 
 for MAGE_VERSION in ${MIRROR_VERSIONS}; do
     MAGE_FILE_NAME=magento-${MAGE_VERSION}.tar.gz
@@ -237,6 +242,16 @@ for MAGE_VERSION in ${MIRROR_VERSIONS}; do
             "${PATCHER[@]}" || die "error applying patch: ${PATCH}"
             rm "${TMP_PATH}/magento/${PATCH_FILE}"
         done
+        # aggregate patch summary from applied.patches.list
+        echo "### ${MAGE_VERSION}" >> "${PATCH_LOG_FILE}"
+        APPLIED_PATCHES="${TMP_PATH}/magento/app/etc/applied.patches.list"
+        if [ -f "${APPLIED_PATCHES}" ]; then
+            grep -r SUPEE- "${TMP_PATH}/magento/app/etc/applied.patches.list" | \
+                awk -F "|" '{printf "%s/%s - %s - %s\n", $2, $4, $5, $6}' >> "${PATCH_LOG_FILE}"
+        else
+            echo "no SUPEE patches applied" >> "${PATCH_LOG_FILE}"
+        fi
+        # create patched tgz ball
         cd "${PROJECT_DIR}"
         tar -cpzf "${MIRROR_PATH_FULL}/${MAGE_FILE_NAME}" -C "${TMP_PATH}" magento/
         rm -rf "${TMP_PATH}/magento"
