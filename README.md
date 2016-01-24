@@ -36,7 +36,7 @@ Managing Patches
 Patch Status
 ------------
 
-[SUPEE-LOG.md](https://github.com/edannenberg/mage-mirror/blob/master/SUPEE-LOG.md)
+[SUPEE-LOG.md](https://raw.githubusercontent.com/edannenberg/mage-mirror/master/SUPEE-LOG.md)
 
 The repo comes with all [official](http://www.magentocommerce.com/download) Magento CE Patches, except:
 
