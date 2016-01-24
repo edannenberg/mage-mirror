@@ -24,7 +24,7 @@ POSIX parameter expansion is supported for most options:
 Downloaded archives are kept unmodified at `$DL_PATH` to avoid downloading again on script rerun.
 The mirror is created at `$MIRROR_PATH`, default: `mirror/`.
 
-NOTE: Automated downloads are broken since Magento 1.9.2.0, you will need to download them manually to `$DL_PATH`. Also remove any timestamp from the filename.
+NOTE: Automated downloads are broken since Magento 1.9.2.0, you will need to download those manually to `$DL_PATH`. The script will fix the missing `magento/` root folder of the 1.9.2.2 release archive.
 
 Managing Patches
 ----------------
@@ -36,6 +36,8 @@ Managing Patches
 Patch Status
 ------------
 
+[SUPEE-LOG.md](https://github.com/edannenberg/mage-mirror/blob/master/SUPEE-LOG.md)
+
 The repo comes with all [official](http://www.magentocommerce.com/download) Magento CE Patches, except:
 
 `PATCH_SUPEE-4334_EE_1.11.0.0-1.13.0.2_v1.sh`
@@ -45,6 +47,8 @@ Which are excluded only for Magento 1.8.x.
 
 `PATCH_SUPEE-1868` is broken for Magento 1.8.x and `PATCH_SUPEE-4334` depends on the former.
 Both patches are supposed to address USPS api changes. 1.7.x is unaffected and fully patched.
+
+`PATCH_SUPEE-7616` is excluded for Magento <1.7.0.0 and Magento 1.8.x. Also USPS related.
 
 Unofficial Patches:
 
